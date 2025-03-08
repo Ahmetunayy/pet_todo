@@ -1,56 +1,76 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, View, FlatList, Text, ActivityIndicator } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
+
+interface denemeTablosu {
+  id: number;
+  name: string;
+}
 
 export default function HomeScreen() {
+  const [data, setData] = useState<denemeTablosu[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+
+        // Supabase sorgusu
+        const { data, error } = await supabase
+          .from('denemeTablosu')
+          .select('*')
+
+        if (error) throw error;
+        setData(data || []);
+      } catch (err) {
+        console.error('Veri çekme hatası:', err);
+        setError(err instanceof Error ? err.message : 'Veriler yüklenirken bir hata oluştu');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <FlatList
+      data={data}
+      keyExtractor={(item) => item.id.toString()}
+      ListHeaderComponent={
+        <ParallaxScrollView
+          headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+          headerImage={
+            <Image
+              source={require('@/assets/images/partial-react-logo.png')}
+              style={styles.reactLogo}
+            />
+          }>
+          <ThemedView style={styles.titleContainer}>
+            <ThemedText type="title">Hoşgeldiniz!</ThemedText>
+            <HelloWave />
+          </ThemedView>
+        </ParallaxScrollView>
+      }
+      ListFooterComponent={
+        <View>
+          {loading && <ActivityIndicator size="large" color="#0000ff" />}
+          {error && <Text style={{ color: 'red' }}>{error}</Text>}
+        </View>
+      }
+      renderItem={({ item }) => (
+        <View style={{ padding: 10, borderBottomWidth: 1, borderColor: '#ccc' }}>
+          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.name}</Text>
+        </View>
+      )}
+    />
   );
 }
 
@@ -59,10 +79,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
   },
   reactLogo: {
     height: 178,
