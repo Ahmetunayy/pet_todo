@@ -17,7 +17,7 @@ interface TodoItemProps {
 
 export const TodoItem: React.FC<TodoItemProps> = ({ task, onToggleComplete, onPress }) => {
   const colorScheme = useColorScheme();
-  
+
   const handlePress = () => {
     if (onPress) {
       onPress();
@@ -52,24 +52,24 @@ export const TodoItem: React.FC<TodoItemProps> = ({ task, onToggleComplete, onPr
       <ThemedView style={styles.card}>
         <TouchableOpacity onPress={handleToggle} style={styles.checkbox}>
           {task.completed ? (
-            <IconSymbol 
-              name="checkmark.circle.fill" 
-              size={24} 
-              color={getCategoryColor()} 
+            <IconSymbol
+              name="checkmark.circle.fill"
+              size={24}
+              color={getCategoryColor()}
             />
           ) : (
-            <IconSymbol 
-              name="circle" 
-              size={24} 
-              color={Colors[colorScheme ?? 'light'].text} 
+            <IconSymbol
+              name="circle"
+              size={24}
+              color={Colors[colorScheme ?? 'light'].text}
             />
           )}
         </TouchableOpacity>
         <View style={styles.content}>
           <View style={styles.titleRow}>
-            <ThemedText 
+            <ThemedText
               style={[
-                styles.title, 
+                styles.title,
                 task.completed && styles.completedText
               ]}
             >
@@ -77,27 +77,27 @@ export const TodoItem: React.FC<TodoItemProps> = ({ task, onToggleComplete, onPr
             </ThemedText>
             {task.priority && (
               <View style={[
-                styles.priorityBadge, 
-                { 
-                  backgroundColor: 
-                    task.priority === 'high' ? '#f44336' : 
-                    task.priority === 'medium' ? '#ff9800' : 
-                    '#4caf50'
+                styles.priorityBadge,
+                {
+                  backgroundColor:
+                    task.priority === 'high' ? '#f44336' :
+                      task.priority === 'medium' ? '#ff9800' :
+                        '#4caf50'
                 }
               ]}>
                 <ThemedText style={styles.priorityText}>
-                  {task.priority === 'high' ? 'Yüksek' : 
-                   task.priority === 'medium' ? 'Orta' : 
-                   'Düşük'}
+                  {task.priority === 'high' ? 'Yüksek' :
+                    task.priority === 'medium' ? 'Orta' :
+                      'Düşük'}
                 </ThemedText>
               </View>
             )}
           </View>
-          
+
           {task.description && (
-            <ThemedText 
+            <ThemedText
               style={[
-                styles.description, 
+                styles.description,
                 task.completed && styles.completedText
               ]}
               numberOfLines={2}
@@ -105,44 +105,44 @@ export const TodoItem: React.FC<TodoItemProps> = ({ task, onToggleComplete, onPr
               {task.description}
             </ThemedText>
           )}
-          
+
           <View style={styles.metaRow}>
             {task.pet && (
               <View style={styles.petBadge}>
-                <IconSymbol 
-                  name="pawprint" 
-                  size={12} 
-                  color={Colors[colorScheme ?? 'light'].text} 
+                <IconSymbol
+                  name="pawprint"
+                  size={12}
+                  color={Colors[colorScheme ?? 'light'].text}
                 />
                 <ThemedText style={styles.petName}>{task.pet.name}</ThemedText>
               </View>
             )}
-            
+
             {task.due_date && (
               <View style={styles.dateContainer}>
-                <IconSymbol 
-                  name="calendar" 
-                  size={12} 
-                  color={Colors[colorScheme ?? 'light'].text} 
+                <IconSymbol
+                  name="calendar"
+                  size={12}
+                  color={Colors[colorScheme ?? 'light'].text}
                 />
                 <ThemedText style={styles.date}>
                   {formatDate(task.due_date)}
                 </ThemedText>
               </View>
             )}
-            
+
             {task.recurring_type && task.recurring_type !== 'none' && (
               <View style={styles.recurringBadge}>
-                <IconSymbol 
-                  name="arrow.clockwise" 
-                  size={12} 
-                  color={Colors[colorScheme ?? 'light'].text} 
+                <IconSymbol
+                  name="arrow.clockwise"
+                  size={12}
+                  color={Colors[colorScheme ?? 'light'].text}
                 />
                 <ThemedText style={styles.recurringText}>
-                  {task.recurring_type === 'daily' ? 'Günlük' : 
-                   task.recurring_type === 'weekly' ? 'Haftalık' : 
-                   task.recurring_type === 'monthly' ? 'Aylık' : 
-                   'Yıllık'}
+                  {task.recurring_type === 'daily' ? 'Günlük' :
+                    task.recurring_type === 'weekly' ? 'Haftalık' :
+                      task.recurring_type === 'monthly' ? 'Aylık' :
+                        'Yıllık'}
                 </ThemedText>
               </View>
             )}

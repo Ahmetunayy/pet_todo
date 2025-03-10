@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -12,6 +12,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { createPet } from '@/lib/api';
 import { Pet } from '@/lib/models';
 import { useAuth } from '@/lib/auth';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 const petTypes: { id: number, name: string }[] = [
   { id: 1, name: 'dog' },
@@ -27,6 +28,7 @@ const genderOptions: Pet['gender'][] = ['male', 'female', 'unknown'];
 
 export default function NewPetScreen() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const { user } = useAuth();
   const [name, setName] = useState('');
   const [typeId, setTypeId] = useState<number>(1); // Varsayılan olarak köpek
@@ -82,9 +84,9 @@ export default function NewPetScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <IconSymbol name="chevron.left" size={24} color={Colors[colorScheme ?? 'light'].text} />
@@ -193,9 +195,9 @@ export default function NewPetScreen() {
                     gender === option && styles.selectedGenderText
                   ]}
                 >
-                  {option === 'male' ? 'Erkek' : 
-                   option === 'female' ? 'Dişi' : 
-                   'Bilinmiyor'}
+                  {option === 'male' ? 'Erkek' :
+                    option === 'female' ? 'Dişi' :
+                      'Bilinmiyor'}
                 </ThemedText>
               </TouchableOpacity>
             ))}
@@ -217,7 +219,7 @@ export default function NewPetScreen() {
           )}
         </TouchableOpacity>
       </ScrollView>
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 

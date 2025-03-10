@@ -3,6 +3,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider, useAuth } from '@/lib/auth';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Kimlik doğrulama durumuna göre yönlendirme yapan bileşen
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -32,21 +33,23 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <AuthProvider>
-      <AuthGuard>
-        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth/login" options={{ title: 'Giriş Yap' }} />
-          <Stack.Screen name="auth/register" options={{ title: 'Kayıt Ol' }} />
-          <Stack.Screen name="auth/forgot-password" options={{ title: 'Şifremi Unuttum' }} />
-          <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
-          <Stack.Screen name="pet/[id]" options={{ title: 'Evcil Hayvan Detayı' }} />
-          <Stack.Screen name="pet/new" options={{ title: 'Yeni Evcil Hayvan' }} />
-          <Stack.Screen name="todo/[id]" options={{ title: 'Görev Detayı' }} />
-          <Stack.Screen name="todo/new" options={{ title: 'Yeni Görev' }} />
-        </Stack>
-      </AuthGuard>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AuthGuard>
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="auth/login" options={{ title: 'Giriş Yap' }} />
+            <Stack.Screen name="auth/register" options={{ title: 'Kayıt Ol' }} />
+            <Stack.Screen name="auth/forgot-password" options={{ title: 'Şifremi Unuttum' }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="pet/[id]" options={{ title: 'Evcil Hayvan Detayı' }} />
+            <Stack.Screen name="pet/new" options={{ title: 'Yeni Evcil Hayvan' }} />
+            <Stack.Screen name="todo/[id]" options={{ title: 'Görev Detayı' }} />
+            <Stack.Screen name="todo/new" options={{ title: 'Yeni Görev' }} />
+          </Stack>
+        </AuthGuard>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View, Alert, Image } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View, Alert, Image, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -13,9 +13,11 @@ import { TodoItem } from '@/components/TodoItem';
 import { Pet, Task } from '@/lib/models';
 import { getPets, getTasks, updateTask } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const { user, profile, signOut } = useAuth();
   const [pets, setPets] = useState<Pet[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -69,8 +71,8 @@ export default function HomeScreen() {
       'Çıkış yapmak istediğinizden emin misiniz?',
       [
         { text: 'İptal', style: 'cancel' },
-        { 
-          text: 'Çıkış Yap', 
+        {
+          text: 'Çıkış Yap',
           style: 'destructive',
           onPress: async () => {
             await signOut();
@@ -82,16 +84,16 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors[colorScheme ?? 'light'].tint} />
-      </View>
+      <SafeAreaView style={[styles.loadingContainer, { backgroundColor }]}>
+        <ActivityIndicator size="large" color={Colors[colorScheme ?? "light"].tint} />
+      </SafeAreaView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.profileHeader}>
         <View style={styles.profileInfo}>
           {profile?.avatar_url ? (
@@ -123,22 +125,24 @@ export default function HomeScreen() {
       </View>
 
       {pets.length === 0 ? (
-        <ThemedView style={styles.emptyState}>
+        <View style={styles.emptyState}>
           <IconSymbol name="pawprint.circle" size={48} color={Colors[colorScheme ?? 'light'].tint} />
           <ThemedText style={styles.emptyText}>Henüz evcil hayvan eklemediniz</ThemedText>
           <TouchableOpacity onPress={handleAddPet} style={styles.emptyButton}>
             <ThemedText style={styles.emptyButtonText}>Evcil Hayvan Ekle</ThemedText>
           </TouchableOpacity>
-        </ThemedView>
+        </View>
       ) : (
-        <FlatList
-          data={pets}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <PetCard pet={item} />}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.petList}
-        />
+        <View>
+          <FlatList
+            data={pets}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <PetCard pet={item} />}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.petList}
+          />
+        </View>
       )}
 
       <View style={styles.header}>
@@ -149,35 +153,35 @@ export default function HomeScreen() {
       </View>
 
       {tasks.length === 0 ? (
-        <ThemedView style={styles.emptyState}>
+        <View style={styles.emptyState}>
           <IconSymbol name="checklist" size={48} color={Colors[colorScheme ?? 'light'].tint} />
           <ThemedText style={styles.emptyText}>Henüz görev eklemediniz</ThemedText>
           <TouchableOpacity onPress={handleAddTask} style={styles.emptyButton}>
             <ThemedText style={styles.emptyButtonText}>Görev Ekle</ThemedText>
           </TouchableOpacity>
-        </ThemedView>
+        </View>
       ) : (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={tasks}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TodoItem 
-              task={item} 
-              onToggleComplete={handleToggleComplete} 
+            <TodoItem
+              task={item}
+              onToggleComplete={handleToggleComplete}
             />
           )}
           style={styles.todoList}
           contentContainerStyle={styles.todoListContent}
         />
       )}
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   loadingContainer: {
     flex: 1,
@@ -252,12 +256,13 @@ const styles = StyleSheet.create({
   },
   petList: {
     paddingRight: 16,
+
   },
   todoList: {
     flex: 1,
   },
   todoListContent: {
-    paddingBottom: 16,
+    paddingBottom: 24,
   },
   emptyState: {
     alignItems: 'center',

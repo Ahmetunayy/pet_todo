@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -10,10 +10,12 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Pet, Task } from '@/lib/models';
 import { deleteTask, getPet, getTask, updateTask } from '@/lib/api';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const [task, setTask] = useState<Task | null>(null);
   const [pet, setPet] = useState<Pet | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,8 +63,8 @@ export default function TaskDetailScreen() {
       'Bu görevi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
       [
         { text: 'İptal', style: 'cancel' },
-        { 
-          text: 'Sil', 
+        {
+          text: 'Sil',
           style: 'destructive',
           onPress: async () => {
             try {
@@ -94,11 +96,11 @@ export default function TaskDetailScreen() {
 
   const getRecurringText = (recurringType?: string) => {
     if (!recurringType || recurringType === 'none') return 'Tekrarlanmıyor';
-    
-    return recurringType === 'daily' ? 'Günlük' : 
-           recurringType === 'weekly' ? 'Haftalık' : 
-           recurringType === 'monthly' ? 'Aylık' : 
-           'Yıllık';
+
+    return recurringType === 'daily' ? 'Günlük' :
+      recurringType === 'weekly' ? 'Haftalık' :
+        recurringType === 'monthly' ? 'Aylık' :
+          'Yıllık';
   };
 
   if (loading) {
@@ -111,7 +113,7 @@ export default function TaskDetailScreen() {
 
   if (!task) {
     return (
-      <ThemedView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor }]}>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -127,7 +129,7 @@ export default function TaskDetailScreen() {
             <ThemedText style={styles.errorButtonText}>Geri Dön</ThemedText>
           </TouchableOpacity>
         </View>
-      </ThemedView>
+      </SafeAreaView>
     );
   }
 
@@ -140,9 +142,9 @@ export default function TaskDetailScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <IconSymbol name="chevron.left" size={24} color={Colors[colorScheme ?? 'light'].text} />
@@ -157,16 +159,16 @@ export default function TaskDetailScreen() {
         <View style={styles.titleContainer}>
           <TouchableOpacity onPress={handleToggleComplete} style={styles.checkbox}>
             {task.completed ? (
-              <IconSymbol 
-                name="checkmark.circle.fill" 
-                size={28} 
-                color={getCategoryColor()} 
+              <IconSymbol
+                name="checkmark.circle.fill"
+                size={28}
+                color={getCategoryColor()}
               />
             ) : (
-              <IconSymbol 
-                name="circle" 
-                size={28} 
-                color={Colors[colorScheme ?? 'light'].text} 
+              <IconSymbol
+                name="circle"
+                size={28}
+                color={Colors[colorScheme ?? 'light'].text}
               />
             )}
           </TouchableOpacity>
@@ -186,7 +188,7 @@ export default function TaskDetailScreen() {
 
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Detaylar</ThemedText>
-          
+
           {pet && (
             <View style={styles.detailRow}>
               <View style={styles.detailLabelContainer}>
@@ -234,25 +236,25 @@ export default function TaskDetailScreen() {
                 <ThemedText style={styles.detailLabel}>Öncelik</ThemedText>
               </View>
               <View style={[
-                styles.priorityBadge, 
-                { 
-                  backgroundColor: 
-                    task.priority === 'high' ? '#f44336' : 
-                    task.priority === 'medium' ? '#ff9800' : 
-                    '#4caf50'
+                styles.priorityBadge,
+                {
+                  backgroundColor:
+                    task.priority === 'high' ? '#f44336' :
+                      task.priority === 'medium' ? '#ff9800' :
+                        '#4caf50'
                 }
               ]}>
                 <ThemedText style={styles.priorityText}>
-                  {task.priority === 'high' ? 'Yüksek' : 
-                   task.priority === 'medium' ? 'Orta' : 
-                   'Düşük'}
+                  {task.priority === 'high' ? 'Yüksek' :
+                    task.priority === 'medium' ? 'Orta' :
+                      'Düşük'}
                 </ThemedText>
               </View>
             </View>
           )}
         </View>
       </View>
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 

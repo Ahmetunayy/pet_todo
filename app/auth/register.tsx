@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View, Alert, ActivityIndicator, ScrollView, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -8,9 +8,10 @@ import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { supabase } from '@/lib/supabase';
-
+import { useThemeColor } from '@/hooks/useThemeColor';
 export default function RegisterScreen() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -74,9 +75,9 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <ThemedText style={styles.title}>Hesap Oluştur</ThemedText>
@@ -155,7 +156,7 @@ export default function RegisterScreen() {
           </View>
         </View>
       </ScrollView>
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 

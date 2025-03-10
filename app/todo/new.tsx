@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -12,12 +12,13 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { createTask, getPets } from '@/lib/api';
 import { Pet, Task } from '@/lib/models';
 import { useAuth } from '@/lib/auth';
-
+import { useThemeColor } from '@/hooks/useThemeColor';
 const recurringOptions: Task['recurring_type'][] = ['daily', 'weekly', 'monthly', 'none'];
 
 export default function NewTaskScreen() {
   const { petId } = useLocalSearchParams<{ petId?: string }>();
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const { user } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -108,9 +109,9 @@ export default function NewTaskScreen() {
 
   if (pets.length === 0) {
     return (
-      <ThemedView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor }]}>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        
+
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <IconSymbol name="chevron.left" size={24} color={Colors[colorScheme ?? 'light'].text} />
@@ -124,21 +125,21 @@ export default function NewTaskScreen() {
           <ThemedText style={styles.emptyText}>
             Görev eklemek için önce bir evcil hayvan eklemelisiniz.
           </ThemedText>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.emptyButton, { backgroundColor: Colors[colorScheme ?? 'light'].tint }]}
             onPress={() => router.push('/pet/new')}
           >
             <ThemedText style={styles.emptyButtonText}>Evcil Hayvan Ekle</ThemedText>
           </TouchableOpacity>
         </View>
-      </ThemedView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <IconSymbol name="chevron.left" size={24} color={Colors[colorScheme ?? 'light'].text} />
@@ -251,8 +252,8 @@ export default function NewTaskScreen() {
                   ]}
                 >
                   {option === 'daily' ? 'Günlük' :
-                   option === 'weekly' ? 'Haftalık' :
-                   option === 'monthly' ? 'Aylık' : 'Tekrarlanmaz'}
+                    option === 'weekly' ? 'Haftalık' :
+                      option === 'monthly' ? 'Aylık' : 'Tekrarlanmaz'}
                 </ThemedText>
               </TouchableOpacity>
             ))}
@@ -274,7 +275,7 @@ export default function NewTaskScreen() {
           )}
         </TouchableOpacity>
       </ScrollView>
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 

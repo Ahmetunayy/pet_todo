@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -11,10 +11,12 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { TodoItem } from '@/components/TodoItem';
 import { Pet, Task } from '@/lib/models';
 import { deletePet, getPet, getTasks, updateTask } from '@/lib/api';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function PetDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const [pet, setPet] = useState<Pet | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,8 +68,8 @@ export default function PetDetailScreen() {
       'Bu evcil hayvanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
       [
         { text: 'İptal', style: 'cancel' },
-        { 
-          text: 'Sil', 
+        {
+          text: 'Sil',
           style: 'destructive',
           onPress: async () => {
             try {
@@ -97,7 +99,7 @@ export default function PetDetailScreen() {
 
   if (!pet) {
     return (
-      <ThemedView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor }]}>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -113,7 +115,7 @@ export default function PetDetailScreen() {
             <ThemedText style={styles.errorButtonText}>Geri Dön</ThemedText>
           </TouchableOpacity>
         </View>
-      </ThemedView>
+      </SafeAreaView>
     );
   }
 
@@ -131,9 +133,9 @@ export default function PetDetailScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <IconSymbol name="chevron.left" size={24} color={Colors[colorScheme ?? 'light'].text} />
@@ -165,9 +167,9 @@ export default function PetDetailScreen() {
           <View style={styles.infoRow}>
             <ThemedText style={styles.infoLabel}>Cinsiyet:</ThemedText>
             <ThemedText style={styles.infoValue}>
-              {pet.gender === 'male' ? 'Erkek' : 
-               pet.gender === 'female' ? 'Dişi' : 
-               'Bilinmiyor'}
+              {pet.gender === 'male' ? 'Erkek' :
+                pet.gender === 'female' ? 'Dişi' :
+                  'Bilinmiyor'}
             </ThemedText>
           </View>
         )}
@@ -186,7 +188,7 @@ export default function PetDetailScreen() {
           <ThemedText style={styles.emptyText}>
             {pet.name} için henüz görev eklemediniz.
           </ThemedText>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.emptyButton, { backgroundColor: Colors[colorScheme ?? 'light'].tint }]}
             onPress={handleAddTask}
           >
@@ -198,16 +200,16 @@ export default function PetDetailScreen() {
           data={tasks}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TodoItem 
-              task={item} 
-              onToggleComplete={handleToggleComplete} 
+            <TodoItem
+              task={item}
+              onToggleComplete={handleToggleComplete}
             />
           )}
           style={styles.todoList}
           contentContainerStyle={styles.todoListContent}
         />
       )}
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 

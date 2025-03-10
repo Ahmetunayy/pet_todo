@@ -24,10 +24,10 @@ export default function OnboardingScreen() {
   return (
     <ThemedView style={styles.container}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.imageContainer}>
-        <Image 
-          source={require('@/assets/images/partial-react-logo.png')} 
+        <Image
+          source={require('@/assets/images/partial-react-logo.png')}
           style={styles.image}
           resizeMode="contain"
         />
@@ -38,7 +38,7 @@ export default function OnboardingScreen() {
         <ThemedText style={styles.subtitle}>
           Evcil hayvanlarınızın bakımını takip etmek hiç bu kadar kolay olmamıştı!
         </ThemedText>
-        
+
         <View style={styles.features}>
           <View style={styles.featureItem}>
             <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
@@ -46,14 +46,14 @@ export default function OnboardingScreen() {
             </View>
             <ThemedText style={styles.featureText}>Evcil hayvanlarınız için görevleri takip edin</ThemedText>
           </View>
-          
+
           <View style={styles.featureItem}>
             <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
               <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
             </View>
             <ThemedText style={styles.featureText}>Aşı takvimlerini otomatik olarak oluşturun</ThemedText>
           </View>
-          
+
           <View style={styles.featureItem}>
             <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
               <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
@@ -73,7 +73,7 @@ export default function OnboardingScreen() {
           >
             <ThemedText style={styles.primaryButtonText}>Kayıt Ol</ThemedText>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={[
               styles.button,

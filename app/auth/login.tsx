@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View, Alert, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View, Alert, ActivityIndicator, Image, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -8,9 +8,10 @@ import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { supabase } from '@/lib/supabase';
-
+import { useThemeColor } from '@/hooks/useThemeColor';
 export default function LoginScreen() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -51,12 +52,12 @@ export default function LoginScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.logoContainer}>
-        <Image 
-          source={require('@/assets/images/splash-icon.png')} 
+        <Image
+          source={require('@/assets/images/splash-icon.png')}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -90,8 +91,8 @@ export default function LoginScreen() {
           secureTextEntry
         />
 
-        <TouchableOpacity 
-          style={styles.forgotPassword} 
+        <TouchableOpacity
+          style={styles.forgotPassword}
           onPress={handleForgotPassword}
         >
           <ThemedText style={styles.forgotPasswordText}>Şifremi Unuttum</ThemedText>
@@ -119,7 +120,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 

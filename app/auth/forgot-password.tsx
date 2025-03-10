@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View, Alert, ActivityIndicator, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -8,9 +8,10 @@ import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { supabase } from '@/lib/supabase';
-
+import { useThemeColor } from '@/hooks/useThemeColor';
 export default function ForgotPasswordScreen() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -53,9 +54,9 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.header}>
         <ThemedText style={styles.title}>Şifremi Unuttum</ThemedText>
         <ThemedText style={styles.subtitle}>Şifrenizi sıfırlamak için e-posta adresinizi girin</ThemedText>
@@ -97,7 +98,7 @@ export default function ForgotPasswordScreen() {
           <ThemedText style={styles.backButtonText}>Giriş Ekranına Dön</ThemedText>
         </TouchableOpacity>
       </View>
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 
