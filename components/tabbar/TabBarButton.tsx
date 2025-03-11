@@ -1,21 +1,44 @@
 import { icon } from "@/constants/icon";
 import { useEffect } from "react";
-import { Pressable, StyleSheet, Animated } from "react-native";
-import { interpolate, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { Pressable, StyleSheet, GestureResponderEvent } from "react-native";
+import Animated, {
+          interpolate,
+          useAnimatedStyle,
+          useSharedValue,
+          withSpring,
+          withTiming
+} from "react-native-reanimated";
 
-export function TabBarButton({ onPress, onLongPress, isFocused, routeName, color }: { onPress: Function, onLongPress: Function, isFocused: boolean, routeName: string, color: string }) {
+type TabBarButtonProps = {
+          onPress: (event: GestureResponderEvent) => void;
+          onLongPress: (event: GestureResponderEvent) => void;
+          isFocused: boolean;
+          routeName: string;
+          color: string;
+}
+
+export function TabBarButton({ onPress, onLongPress, isFocused, routeName, color }: TabBarButtonProps) {
           const scale = useSharedValue(0);
+
+          // Update animation when focus changes
           useEffect(() => {
-                    scale.value = withSpring(typeof isFocused === 'boolean' ? (isFocused ? 1 : 0) : isFocused, { duration: 350 })
-          }, [scale, isFocused])
+                    scale.value = withSpring(isFocused ? 1 : 0, {
+                              damping: 15,
+                              stiffness: 200,
+                              mass: 1
+                    });
+          }, [isFocused]);
+
           const animatedIconStyle = useAnimatedStyle(() => {
-                    const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2])
-                    const top = interpolate(scale.value, [0, 1], [0, 9])
+                    const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2]);
+                    const top = interpolate(scale.value, [0, 1], [0, -5]);
+
                     return {
                               transform: [{ scale: scaleValue }],
                               top: top
-                    }
-          })
+                    };
+          });
+
           return (
                     <Pressable
                               onPress={onPress}
@@ -24,10 +47,9 @@ export function TabBarButton({ onPress, onLongPress, isFocused, routeName, color
                     >
                               <Animated.View style={animatedIconStyle}>
                                         {icon[routeName as keyof typeof icon]({
-                                                  color: isFocused ? '#673ab7' : '#222'
+                                                  color: isFocused ? '#723FEB' : '#222'
                                         })}
                               </Animated.View>
-
                     </Pressable>
           )
 }
@@ -38,5 +60,6 @@ const styles = StyleSheet.create({
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 5,
+                    height: 40,
           },
 });

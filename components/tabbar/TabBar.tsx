@@ -1,42 +1,67 @@
-import { View, Platform, StyleSheet, TouchableOpacity, LayoutChangeEvent, Animated } from 'react-native';
+import { View, Platform, StyleSheet, TouchableOpacity, LayoutChangeEvent } from 'react-native';
 import { useLinkBuilder, useTheme } from '@react-navigation/native';
-import { Text, PlatformPressable } from '@react-navigation/elements';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { IconSymbol } from '../ui/IconSymbol';
-import { Feather } from '@expo/vector-icons';
 import { TabBarButton } from './TabBarButton';
-import { useState } from 'react';
-import { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useEffect, useState } from 'react';
+import Animated, {
+          useAnimatedStyle,
+          useSharedValue,
+          withSpring,
+          runOnJS
+} from 'react-native-reanimated';
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           const { colors } = useTheme();
           const { buildHref } = useLinkBuilder();
 
-          const [dimensions, setDimensions] = useState({ width: 100, height: 20 });
+          const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
           const buttonWidth = dimensions.width / state.routes.length;
-          const onTabbarLayout = (event: LayoutChangeEvent) => {
-                    setDimensions({
-                              width: event.nativeEvent.layout.width,
-                              height: event.nativeEvent.layout.height
-                    });
-          }
+
+          // Animation shared values
           const tabPositionX = useSharedValue(0);
+
+          // Set initial position and update when index changes
+          useEffect(() => {
+                    if (buttonWidth > 0) {
+                              tabPositionX.value = withSpring(buttonWidth * state.index, {
+                                        mass: 1,
+                                        damping: 20,
+                                        stiffness: 200,
+                              });
+                    }
+          }, [state.index, buttonWidth]);
+
+          const onTabbarLayout = (event: LayoutChangeEvent) => {
+                    const { width, height } = event.nativeEvent.layout;
+                    setDimensions({ width, height });
+
+                    // Set initial position after layout
+                    if (width > 0) {
+                              tabPositionX.value = width / state.routes.length * state.index;
+                    }
+          };
+
+          // Animated styles for the indicator
           const animatedStyle = useAnimatedStyle(() => {
                     return {
                               transform: [{ translateX: tabPositionX.value }]
-                    }
-          })
+                    };
+          });
+
           return (
                     <View onLayout={onTabbarLayout} style={styles.tabBar}>
-                              <Animated.View style={[animatedStyle, {
-                                        position: 'absolute',
-                                        backgroundColor: '#723FEB',
-                                        borderRadius: 30,
-                                        marginHorizontal: 12,
-                                        height: dimensions.height - 15,
-                                        width: buttonWidth - 25,
-                              }]} />
+                              {dimensions.width > 0 && (
+                                        <Animated.View
+                                                  style={[
+                                                            styles.activeIndicator,
+                                                            animatedStyle,
+                                                            {
+                                                                      width: buttonWidth - 20,
+                                                                      height: dimensions.height - 15,
+                                                            }
+                                                  ]}
+                                        />
+                              )}
                               {state.routes.map((route, index) => {
                                         const { options } = descriptors[route.key];
                                         const label =
@@ -48,8 +73,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
                                         const isFocused = state.index === index;
 
-                                        const onPress = () => {
-                                                  tabPositionX.value = withSpring(buttonWidth * index, { duration: 1500 })
+                                        const onPress = (e: any) => {
                                                   const event = navigation.emit({
                                                             type: 'tabPress',
                                                             target: route.key,
@@ -61,7 +85,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
                                                   }
                                         };
 
-                                        const onLongPress = () => {
+                                        const onLongPress = (e: any) => {
                                                   navigation.emit({
                                                             type: 'tabLongPress',
                                                             target: route.key,
@@ -75,16 +99,13 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
                                                             onLongPress={onLongPress}
                                                             isFocused={isFocused}
                                                             routeName={route.name}
-                                                            color={isFocused ? '#673ab7' : '#222'}
-
+                                                            color={isFocused ? '#723FEB' : '#222'}
                                                   />
-
                                         );
                               })}
                     </View>
           );
 }
-
 
 const styles = StyleSheet.create({
           tabBar: {
@@ -93,7 +114,7 @@ const styles = StyleSheet.create({
                     flexDirection: 'row',
                     alignItems: 'center',
                     backgroundColor: '#fff',
-                    marginHorizontal: 80,
+                    marginHorizontal: 10,
                     justifyContent: 'space-between',
                     paddingVertical: 15,
                     borderRadius: 35,
@@ -101,8 +122,14 @@ const styles = StyleSheet.create({
                     shadowOffset: { width: 0, height: 10 },
                     shadowOpacity: 0.1,
                     shadowRadius: 3.84,
-
+                    elevation: 5,
           },
-
+          activeIndicator: {
+                    position: 'absolute',
+                    backgroundColor: '#723FEB',
+                    opacity: 0.25,
+                    borderRadius: 40,
+                    left: 10,
+          }
 });
 
