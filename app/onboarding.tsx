@@ -2,16 +2,19 @@ import React from 'react';
 import { StyleSheet, Image, View, TouchableOpacity, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { ResizeMode, Video } from 'expo-av';
 
 const { width } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background")
 
   const handleLogin = () => {
     router.push('/auth/login');
@@ -22,85 +25,105 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.fullScreenContainer}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
-      <View style={styles.imageContainer}>
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      </View>
+      <Video
+        source={require('@/assets/videos/bgVideo.mp4')}
+        style={StyleSheet.absoluteFill}
+        resizeMode={ResizeMode.COVER}
+        shouldPlay
+        isLooping
+        isMuted
+      />
 
-      <View style={styles.contentContainer}>
-        <ThemedText style={styles.title}>Pet Todo</ThemedText>
-        <ThemedText style={styles.subtitle}>
-          Evcil hayvanlarınızın bakımını takip etmek hiç bu kadar kolay olmamıştı!
-        </ThemedText>
+      {/* Karanlık Overlay - Videonun üzerine yerleştiriliyor */}
+      <View style={styles.overlay} />
 
-        <View style={styles.features}>
-          <View style={styles.featureItem}>
-            <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
-              <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
+      <SafeAreaView style={[styles.container]}>
+
+
+        <View style={styles.contentContainer}>
+          <View>
+            <ThemedText style={styles.titles}>Pet Todo</ThemedText>
+          </View>
+          <ThemedText style={styles.subtitle}>
+            Evcil hayvanlarınızın bakımını takip etmek hiç bu kadar kolay olmamıştı!
+          </ThemedText>
+
+          <View style={styles.features}>
+            <View style={styles.featureItem}>
+              <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
+                <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
+              </View>
+              <ThemedText style={styles.featureText}>Evcil hayvanlarınız için görevleri takip edin</ThemedText>
             </View>
-            <ThemedText style={styles.featureText}>Evcil hayvanlarınız için görevleri takip edin</ThemedText>
+
+            <View style={styles.featureItem}>
+              <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
+                <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
+              </View>
+              <ThemedText style={styles.featureText}>Aşı takvimlerini otomatik olarak oluşturun</ThemedText>
+            </View>
+
+            <View style={styles.featureItem}>
+              <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
+                <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
+              </View>
+              <ThemedText style={styles.featureText}>Tekrarlanan görevleri otomatik olarak planlayın</ThemedText>
+            </View>
           </View>
 
-          <View style={styles.featureItem}>
-            <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
-              <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
-            </View>
-            <ThemedText style={styles.featureText}>Aşı takvimlerini otomatik olarak oluşturun</ThemedText>
-          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.primaryButton,
+                { backgroundColor: Colors[colorScheme ?? 'light'].tint }
+              ]}
+              onPress={handleRegister}
+            >
+              <ThemedText style={styles.primaryButtonText}>Kayıt Ol</ThemedText>
+            </TouchableOpacity>
 
-          <View style={styles.featureItem}>
-            <View style={[styles.featureIcon, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
-              <ThemedText style={[styles.featureIconText, { color: Colors[colorScheme ?? 'light'].tint }]}>✓</ThemedText>
-            </View>
-            <ThemedText style={styles.featureText}>Tekrarlanan görevleri otomatik olarak planlayın</ThemedText>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.secondaryButton,
+                { borderColor: Colors[colorScheme ?? 'light'].tint }
+              ]}
+              onPress={handleLogin}
+            >
+              <ThemedText style={[styles.secondaryButtonText, { color: Colors[colorScheme ?? 'light'].tint }]}>
+                Giriş Yap
+              </ThemedText>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              styles.primaryButton,
-              { backgroundColor: Colors[colorScheme ?? 'light'].tint }
-            ]}
-            onPress={handleRegister}
-          >
-            <ThemedText style={styles.primaryButtonText}>Kayıt Ol</ThemedText>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.button,
-              styles.secondaryButton,
-              { borderColor: Colors[colorScheme ?? 'light'].tint }
-            ]}
-            onPress={handleLogin}
-          >
-            <ThemedText style={[styles.secondaryButtonText, { color: Colors[colorScheme ?? 'light'].tint }]}>
-              Giriş Yap
-            </ThemedText>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ThemedView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  fullScreenContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   container: {
     flex: 1,
-  },
-  imageContainer: {
-    height: width * 0.8,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 40,
+  },
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Hafif karartma efekti
   },
   image: {
     width: width * 0.8,
@@ -109,12 +132,14 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     padding: 24,
+    justifyContent: 'center',
   },
-  title: {
+  titles: {
     fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 12,
+
   },
   subtitle: {
     fontSize: 16,
@@ -147,7 +172,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
-    marginTop: 'auto',
+
   },
   button: {
     borderRadius: 12,
@@ -160,7 +185,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   primaryButtonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 16,
     fontWeight: '600',
   },

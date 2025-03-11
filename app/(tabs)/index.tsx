@@ -94,87 +94,89 @@ export default function HomeScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
-      <View style={styles.profileHeader}>
-        <View style={styles.profileInfo}>
-          {profile?.avatar_url ? (
-            <Image source={{ uri: profile.avatar_url }} style={styles.avatar} />
-          ) : (
-            <View style={[styles.avatarPlaceholder, { backgroundColor: Colors[colorScheme ?? 'light'].tint }]}>
-              <ThemedText style={styles.avatarText}>
-                {profile?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+      <View style={styles.contentContainer}>
+        <View style={styles.profileHeader}>
+          <View style={styles.profileInfo}>
+            {profile?.avatar_url ? (
+              <Image source={{ uri: profile.avatar_url }} style={styles.avatar} />
+            ) : (
+              <View style={[styles.avatarPlaceholder, { backgroundColor: Colors[colorScheme ?? 'light'].tint }]}>
+                <ThemedText style={styles.avatarText}>
+                  {profile?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                </ThemedText>
+              </View>
+            )}
+            <View style={styles.profileTextContainer}>
+              <ThemedText style={styles.profileName}>
+                {profile?.name || user?.email?.split('@')[0] || 'Kullanıcı'}
               </ThemedText>
+              <ThemedText style={styles.profileEmail}>{user?.email}</ThemedText>
             </View>
-          )}
-          <View style={styles.profileTextContainer}>
-            <ThemedText style={styles.profileName}>
-              {profile?.name || user?.email?.split('@')[0] || 'Kullanıcı'}
-            </ThemedText>
-            <ThemedText style={styles.profileEmail}>{user?.email}</ThemedText>
           </View>
-        </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <IconSymbol name="rectangle.portrait.and.arrow.right" size={20} color={Colors[colorScheme ?? 'light'].text} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>Evcil Hayvanlarım</ThemedText>
-        <TouchableOpacity onPress={handleAddPet} style={styles.addButton}>
-          <IconSymbol name="plus.circle.fill" size={24} color={Colors[colorScheme ?? 'light'].tint} />
-        </TouchableOpacity>
-      </View>
-
-      {pets.length === 0 ? (
-        <View style={styles.emptyState}>
-          <IconSymbol name="pawprint.circle" size={48} color={Colors[colorScheme ?? 'light'].tint} />
-          <ThemedText style={styles.emptyText}>Henüz evcil hayvan eklemediniz</ThemedText>
-          <TouchableOpacity onPress={handleAddPet} style={styles.emptyButton}>
-            <ThemedText style={styles.emptyButtonText}>Evcil Hayvan Ekle</ThemedText>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <IconSymbol name="rectangle.portrait.and.arrow.right" size={20} color={Colors[colorScheme ?? 'light'].text} />
           </TouchableOpacity>
         </View>
-      ) : (
-        <View>
-          <FlatList
-            data={pets}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <PetCard pet={item} />}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.petList}
-          />
-        </View>
-      )}
 
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>Görevler</ThemedText>
-        <TouchableOpacity onPress={handleAddTask} style={styles.addButton}>
-          <IconSymbol name="plus.circle.fill" size={24} color={Colors[colorScheme ?? 'light'].tint} />
-        </TouchableOpacity>
-      </View>
-
-      {tasks.length === 0 ? (
-        <View style={styles.emptyState}>
-          <IconSymbol name="checklist" size={48} color={Colors[colorScheme ?? 'light'].tint} />
-          <ThemedText style={styles.emptyText}>Henüz görev eklemediniz</ThemedText>
-          <TouchableOpacity onPress={handleAddTask} style={styles.emptyButton}>
-            <ThemedText style={styles.emptyButtonText}>Görev Ekle</ThemedText>
+        <View style={styles.header}>
+          <ThemedText style={styles.title}>Evcil Hayvanlarım</ThemedText>
+          <TouchableOpacity onPress={handleAddPet} style={styles.addButton}>
+            <IconSymbol name="plus.circle.fill" size={24} color={Colors[colorScheme ?? 'light'].tint} />
           </TouchableOpacity>
         </View>
-      ) : (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={tasks}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TodoItem
-              task={item}
-              onToggleComplete={handleToggleComplete}
+
+        {pets.length === 0 ? (
+          <View style={styles.emptyState}>
+            <IconSymbol name="pawprint.circle" size={48} color={Colors[colorScheme ?? 'light'].tint} />
+            <ThemedText style={styles.emptyText}>Henüz evcil hayvan eklemediniz</ThemedText>
+            <TouchableOpacity onPress={handleAddPet} style={styles.emptyButton}>
+              <ThemedText style={styles.emptyButtonText}>Evcil Hayvan Ekle</ThemedText>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View>
+            <FlatList
+              data={pets}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => <PetCard pet={item} />}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.petList}
             />
-          )}
-          style={styles.todoList}
-          contentContainerStyle={styles.todoListContent}
-        />
-      )}
+          </View>
+        )}
+
+        <View style={styles.header}>
+          <ThemedText style={styles.title}>Görevler</ThemedText>
+          <TouchableOpacity onPress={handleAddTask} style={styles.addButton}>
+            <IconSymbol name="plus.circle.fill" size={24} color={Colors[colorScheme ?? 'light'].tint} />
+          </TouchableOpacity>
+        </View>
+
+        {tasks.length === 0 ? (
+          <View style={styles.emptyState}>
+            <IconSymbol name="checklist" size={48} color={Colors[colorScheme ?? 'light'].tint} />
+            <ThemedText style={styles.emptyText}>Henüz görev eklemediniz</ThemedText>
+            <TouchableOpacity onPress={handleAddTask} style={styles.emptyButton}>
+              <ThemedText style={styles.emptyButtonText}>Görev Ekle</ThemedText>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={tasks}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TodoItem
+                task={item}
+                onToggleComplete={handleToggleComplete}
+              />
+            )}
+            style={styles.todoList}
+            contentContainerStyle={styles.todoListContent}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 }
@@ -182,6 +184,10 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 8,
   },
   loadingContainer: {
     flex: 1,
@@ -228,9 +234,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   logoutButton: {
-    padding: 8,
-    width: 44,
-    height: 44,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 22,
@@ -248,8 +251,6 @@ const styles = StyleSheet.create({
   },
   addButton: {
     padding: 4,
-    width: 44,
-    height: 44,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 22,
